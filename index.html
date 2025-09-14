@@ -408,11 +408,29 @@
 
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
  <script>
-  // JavaScript alternativo - clique só funciona em partes específicas
+  // JavaScript corrigido
   const card = document.getElementById("birthdayCard");
   const confettiCanvas = document.getElementById('confetti-canvas');
-  const cardFront = document.querySelector('.cardFront');
-  const cardInside = document.querySelector('.cardInside');
+  
+  // Criar botão de abrir/fechar
+  const toggleButton = document.createElement('button');
+  toggleButton.innerHTML = '🎁 Clique para abrir';
+  toggleButton.style.cssText = `
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #ff3366;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 1000;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  `;
+  document.body.appendChild(toggleButton);
 
   // Configuração do canvas para confetti
   confettiCanvas.width = window.innerWidth;
@@ -422,25 +440,32 @@
   function openCard() {
     card.classList.add("open");
     startConfetti();
+    toggleButton.innerHTML = '✉️ Clique para fechar';
+    toggleButton.style.background = '#e600ff';
   }
 
   // Função para fechar o cartão
   function closeCard() {
     card.classList.remove("open");
+    toggleButton.innerHTML = '🎁 Clique para abrir';
+    toggleButton.style.background = '#ff3366';
   }
 
-  // Evento apenas na Frente do cartão para abrir
-  cardFront.addEventListener("click", openCard);
-  cardFront.addEventListener("touchstart", function(e) {
-    e.preventDefault();
-    openCard();
-  }, { passive: false });
+  // Evento no botão
+  toggleButton.addEventListener("click", function() {
+    if (card.classList.contains("open")) {
+      closeCard();
+    } else {
+      openCard();
+    }
+  });
 
-  // Evento apenas no Interior do cartão para fechar
-  cardInside.addEventListener("click", closeCard);
-  cardInside.addEventListener("touchstart", function(e) {
-    e.preventDefault();
-    closeCard();
+  // Evento de TOQUE no cartão (apenas para fechar se estiver aberto)
+  card.addEventListener("touchstart", function(e) {
+    if (card.classList.contains("open")) {
+      e.preventDefault();
+      closeCard();
+    }
   }, { passive: false });
 
   function startConfetti(){
@@ -472,6 +497,13 @@
     confettiCanvas.width = window.innerWidth;
     confettiCanvas.height = window.innerHeight;
   });
+
+  // Indicar que é clicável em mobile
+  document.addEventListener('DOMContentLoaded', function() {
+    if ('ontouchstart' in window) {
+      card.style.cursor = 'pointer';
+    }
+  });
 </script>
-</body>
+</body> 
 </html>
