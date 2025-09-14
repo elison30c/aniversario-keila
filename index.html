@@ -407,73 +407,71 @@
   <canvas id="confetti-canvas"></canvas>
 
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-  <script>
-    // JavaScript incorporado diretamente
-    const card = document.getElementById("birthdayCard");
-    const confettiCanvas = document.getElementById('confetti-canvas');
+ <script>
+  // JavaScript alternativo - clique só funciona em partes específicas
+  const card = document.getElementById("birthdayCard");
+  const confettiCanvas = document.getElementById('confetti-canvas');
+  const cardFront = document.querySelector('.cardFront');
+  const cardInside = document.querySelector('.cardInside');
 
-    // Configuração do canvas para confetti
+  // Configuração do canvas para confetti
+  confettiCanvas.width = window.innerWidth;
+  confettiCanvas.height = window.innerHeight;
+
+  // Função para abrir o cartão
+  function openCard() {
+    card.classList.add("open");
+    startConfetti();
+  }
+
+  // Função para fechar o cartão
+  function closeCard() {
+    card.classList.remove("open");
+  }
+
+  // Evento apenas na Frente do cartão para abrir
+  cardFront.addEventListener("click", openCard);
+  cardFront.addEventListener("touchstart", function(e) {
+    e.preventDefault();
+    openCard();
+  }, { passive: false });
+
+  // Evento apenas no Interior do cartão para fechar
+  cardInside.addEventListener("click", closeCard);
+  cardInside.addEventListener("touchstart", function(e) {
+    e.preventDefault();
+    closeCard();
+  }, { passive: false });
+
+  function startConfetti(){
+    const duration = 5000;
+    const end = Date.now() + duration;
+
+    (function frame(){
+      confetti({
+        particleCount: 5,
+        angle: 60,
+        spread: 55,
+        origin: { x: 0, y: 0.5 }
+      });
+      confetti({
+        particleCount: 5,
+        angle: 120,
+        spread: 55,
+        origin: { x: 1, y: 0.5 }
+      });
+
+      if (Date.now() < end) {
+        requestAnimationFrame(frame);
+      }
+    })();
+  }
+
+  // Redimensionar canvas
+  window.addEventListener('resize', function() {
     confettiCanvas.width = window.innerWidth;
     confettiCanvas.height = window.innerHeight;
-
-    // Função para abrir o cartão
-    function openCard() {
-      card.classList.toggle("open");
-      if (card.classList.contains("open")) {
-        startConfetti();
-      }
-    }
-
-    // Evento de CLIQUE (mouse)
-    card.addEventListener("click", openCard);
-
-    // Evento de TOQUE (dispositivos móveis)
-    card.addEventListener("touchstart", function(e) {
-      e.preventDefault();
-      openCard();
-    }, { passive: false });
-
-    // Prevenir zoom com double-tap
-    card.addEventListener('touchend', function(e) {
-      e.preventDefault();
-    });
-
-    function startConfetti(){
-      const duration = 5000;
-      const end = Date.now() + duration;
-
-      (function frame(){
-        confetti({
-          particleCount: 5,
-          angle: 60,
-          spread: 55,
-          origin: { x: 0, y: 0.5 }
-        });
-        confetti({
-          particleCount: 5,
-          angle: 120,
-          spread: 55,
-          origin: { x: 1, y: 0.5 }
-        });
-
-        if (Date.now() < end) {
-          requestAnimationFrame(frame);
-        }
-      })();
-    }
-
-    // Redimensionar canvas
-    window.addEventListener('resize', function() {
-      confettiCanvas.width = window.innerWidth;
-      confettiCanvas.height = window.innerHeight;
-    });
-
-    // Indicar que é clicável em mobile
-    document.addEventListener('DOMContentLoaded', function() {
-      if ('ontouchstart' in window) {
-        card.style.cursor = 'pointer';
-      }
-    });
-  </script>
+  });
+</script>
 </body>
 </html>
