@@ -387,6 +387,72 @@
 .cardFront, .cardInside {
   pointer-events: auto;
 }
+/* Estilo do botão de toggle */
+#cardToggleButton {
+  position: fixed;
+  right: 30px;
+  bottom: 30px;
+  background: linear-gradient(45deg, #ff3366, #e600ff);
+  color: white;
+  border: none;
+  padding: 15px 25px;
+  border-radius: 50px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 1000;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+  transition: all 0.3s ease;
+  font-family: Arial, sans-serif;
+}
+
+#cardToggleButton:hover {
+  transform: scale(1.1);
+}
+
+#cardToggleButton.open {
+  background: linear-gradient(45deg, #e600ff, #ff3366);
+}
+
+/* Ajustes específicos para mobile */
+@media (max-width: 560px) {
+  #cardToggleButton {
+    bottom: 30px;
+    right: 20px;
+    padding: 12px 20px;
+    font-size: 16px;
+    z-index: 1001; /* Garantir que fique acima de tudo */
+  }
+  
+  #cardToggleButton.open {
+    /* Quando aberto no mobile, mover para o topo */
+    top: 15px;
+    bottom: auto;
+    right: 15px;
+    padding: 10px 18px;
+    font-size: 14px;
+  }
+  
+  /* Garantir que o conteúdo não fique escondido atrás do botão */
+  .cardInside {
+    padding-bottom: 80px !important; /* Espaço para o botão na parte inferior */
+  }
+  
+  .birthdayCard.open .cardInside {
+    padding-top: 60px !important; /* Espaço para o botão no topo quando aberto */
+  }
+}
+
+/* Melhorar a área de toque no mobile */
+@media (max-width: 560px) {
+  #cardToggleButton {
+    min-height: 44px; /* Tamanho mínimo recomendado para toque */
+    min-width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
   </style>
 </head>
 <body>
@@ -437,7 +503,7 @@
   <canvas id="confetti-canvas"></canvas>
 
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-  <script>
+<script>
   // JavaScript corrigido para mobile
   const card = document.getElementById("birthdayCard");
   const confettiCanvas = document.getElementById('confetti-canvas');
@@ -445,31 +511,8 @@
   // Criar botão flutuante para abrir/fechar
   const toggleButton = document.createElement('div');
   toggleButton.innerHTML = '🎁 ABRIR CARTÃO';
-  toggleButton.style.cssText = `
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    background: linear-gradient(45deg, #ff3366, #e600ff);
-    color: white;
-    border: none;
-    padding: 15px 25px;
-    border-radius: 50px;
-    font-size: 18px;
-    font-weight: bold;
-    cursor: pointer;
-    z-index: 1000;
-    box-shadow: 0 6px 12px rgba(0,0,0,0.3);
-    transition: all 0.3s ease;
-  `;
+  toggleButton.setAttribute('id', 'cardToggleButton');
   document.body.appendChild(toggleButton);
-
-  // Efeito hover no botão
-  toggleButton.addEventListener('mouseenter', () => {
-    toggleButton.style.transform = 'scale(1.1)';
-  });
-  toggleButton.addEventListener('mouseleave', () => {
-    toggleButton.style.transform = 'scale(1)';
-  });
 
   // Configuração do canvas para confetti
   confettiCanvas.width = window.innerWidth;
@@ -483,16 +526,16 @@
     card.classList.add("open");
     isCardOpen = true;
     startConfetti();
-    toggleButton.innerHTML = '✉️ FECHAR CARTÃO';
-    toggleButton.style.background = 'linear-gradient(45deg, #e600ff, #ff3366)';
+    toggleButton.innerHTML = '✉️ FECHAR';
+    toggleButton.classList.add('open');
   }
 
   // Função para fechar o cartão
   function closeCard() {
     card.classList.remove("open");
     isCardOpen = false;
-    toggleButton.innerHTML = '🎁 ABRIR CARTÃO';
-    toggleButton.style.background = 'linear-gradient(45deg, #ff3366, #e600ff)';
+    toggleButton.innerHTML = '🎁 ABRIR';
+    toggleButton.classList.remove('open');
   }
 
   // Evento apenas no BOTÃO
@@ -516,13 +559,13 @@
   }, { passive: false });
 
   // Remover completamente eventos de toque do cartão
-  card.style.touchAction = 'auto'; // Permite rolagem normal
+  card.style.touchAction = 'auto';
   card.style.pointerEvents = 'auto';
 
   // Permitir rolagem dentro do cartão quando aberto
   const cardInside = document.querySelector('.cardInside');
   cardInside.style.overflowY = 'auto';
-  cardInside.style.webkitOverflowScrolling = 'touch'; // Suave no iOS
+  cardInside.style.webkitOverflowScrolling = 'touch';
 
   function startConfetti(){
     const duration = 5000;
@@ -554,13 +597,35 @@
     confettiCanvas.height = window.innerHeight;
   });
 
-  // Melhorias para mobile
-  document.addEventListener('DOMContentLoaded', function() {
-    // Adicionar classe para identificar mobile
-    if ('ontouchstart' in window) {
-      document.body.classList.add('is-mobile');
+  // Detectar mobile e ajustar posição do botão
+  function adjustButtonPosition() {
+    if (window.innerWidth <= 560) {
+      // Para mobile, posicionar no topo quando o cartão estiver aberto
+      if (isCardOpen) {
+        toggleButton.style.top = '20px';
+        toggleButton.style.bottom = 'auto';
+      } else {
+        toggleButton.style.bottom = '30px';
+        toggleButton.style.top = 'auto';
+      }
     }
-  });
+  }
+
+  // Ajustar posição quando abrir/fechar
+  const originalOpen = openCard;
+  const originalClose = closeCard;
+  
+  openCard = function() {
+    originalOpen();
+    adjustButtonPosition();
+  }
+  
+  closeCard = function() {
+    originalClose();
+    adjustButtonPosition();
+  }
+
+  window.addEventListener('resize', adjustButtonPosition);
 </script>
 </body>
 </html>
