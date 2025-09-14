@@ -1,0 +1,340 @@
+* { box-sizing: border-box; }
+
+body{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:100vh;
+  margin:0;
+  background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+  font-family: "Arial", sans-serif;
+  overflow: hidden;
+}
+
+.birthdayCard{
+  position: relative;
+  width: 500px;
+  height: 700px;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  perspective: 2500px;
+  transition: transform .6s;
+  z-index: 2;
+}
+
+.cardFront{
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, #ffeff5, #ffffff);
+  overflow: hidden;
+  transform-origin: left center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2), inset 0 0 100px rgba(230, 0, 255, 0.1);
+  transition: transform 1.2s;
+  border-radius: 15px;
+  border: 4px solid #e600ff;
+  backface-visibility: hidden;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.birthdayCard.open .cardFront {
+  transform: rotateY(-180deg);
+}
+
+.front-text{
+  text-align: center;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  max-width: 90%;
+}
+
+.happy{
+  color: #ff3366;
+  font-size: 42px;
+  margin: 0;
+  line-height: 1;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.bday{
+  color: #ff3366;
+  font-size: 46px;
+  font-weight: 800;
+  margin: 0;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.toyou{
+  color: #ff3366;
+  font-size: 36px;
+  margin: 0;
+  line-height: 1.2;
+  font-weight: 600;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.wrap-deco { 
+  position: absolute; 
+  top: -200px; 
+  left: -180px; 
+  z-index: 1;
+  opacity: 0.7;
+}
+.wrap-decoTwo { 
+  position: absolute; 
+  top: -200px; 
+  right: -180px; 
+  transform: scaleX(-1); 
+  z-index: 1;
+  opacity: 0.7;
+}
+
+.decorations { 
+  position: absolute; 
+  width: 350px; 
+  height: 280px; 
+  border: 3px solid #ff3366; 
+  border-radius: 50%; 
+  opacity: 0.5;
+}
+.decorationsTwo, .decorationsThree {
+  position: absolute;
+  width: 350px;
+  height: 280px;
+  border-radius: 50%;
+  opacity: 0.5;
+}
+
+.decorations:before, .decorations:after,
+.decorationsTwo:before, .decorationsTwo:after,
+.decorationsThree:before, .decorationsThree:after {
+  content:""; 
+  position:absolute; 
+  border-left: 18px solid transparent; 
+  border-right: 18px solid transparent; 
+  width:0; 
+  height:0;
+}
+
+.decorations:before { border-top: 35px solid #f15bb5; top: 270px; left: 190px; transform: rotate(-5deg); }
+.decorations:after  { border-top: 35px solid #f4d35e; top: 262px; left: 235px; transform: rotate(-17deg); }
+.decorationsTwo:before { border-top: 35px solid #00f5d4; top: 245px; left: 285px; transform: rotate(-30deg); }
+.decorationsTwo:after, .decorationsThree:after { border-top: 35px solid #9b5de5; top: 220px; left: 320px; transform: rotate(-40deg); }
+.decorationsThree:before { border-top: 35px solid #00bbf9; top: 245px; left: 285px; transform: rotate(-30deg); }
+
+/* CORREÇÃO DO BOLO - Posicionamento correto */
+.plate { 
+  position: absolute; 
+  width: 120px; 
+  height: 5px; 
+  background: #00bbf9; 
+  left: 50%; 
+  margin-left: -60px;
+  bottom: 100px; /* Ajuste na posição vertical */
+  z-index: 2;
+}
+
+.cake { 
+  position: absolute; 
+  width: 90px; 
+  height: 45px; 
+  background: #f15bb5; 
+  border-radius: 10px 10px 0 0; 
+  top: -45px; 
+  left: 15px; 
+  box-shadow: inset 0 -12px #f9c74f, inset 0 12px #432818; 
+  z-index: 2;
+}
+
+.flame { 
+  position: absolute; 
+  width: 14px; 
+  height: 14px; 
+  background: #fb5607; 
+  border-radius: 80% 0 55% 50% / 55% 0 80% 50%; 
+  transform: rotate(-45deg); 
+  top: -80px; 
+  left: 52px; 
+  opacity: 0.8; 
+  z-index: 2;
+  animation: flicker 1.5s infinite alternate;
+}
+
+@keyframes flicker {
+  0%, 100% { opacity: 0.8; transform: rotate(-45deg) scale(1); }
+  50% { opacity: 1; transform: rotate(-45deg) scale(1.1); }
+}
+
+.cardInside{
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  box-shadow: inset 0 0 100px rgba(0,0,0,0.1);
+  padding: 30px 45px 30px 35px; /* Mais espaço nas laterais */
+  border-radius: 15px;
+  border: 4px solid #e600ff;
+  overflow-y: auto;
+  z-index: 1;
+  backface-visibility: hidden;
+  transition: transform 1.2s;
+  transform: rotateY(180deg);
+}
+
+.birthdayCard.open .cardInside {
+  transform: rotateY(0deg);
+}
+
+.inside-text { 
+  text-align: center; 
+  margin-bottom: 15px; 
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.inside-text .happy, .inside-text .bday { 
+  color: #ff3366; 
+  margin: 0;
+  line-height: 1.2;
+}
+
+.inside-text .happy {
+  font-size: 36px;
+  font-weight: 700;
+}
+
+.inside-text .bday {
+  font-size: 40px;
+  font-weight: 800;
+}
+
+.wishes { 
+  color: #333; 
+  font-size: 18px; 
+  line-height: 1.6; 
+  text-align: left;
+  position: relative;
+  z-index: 2; /* Acima dos emojis */
+  padding: 0 5px;
+}
+.wishes p { 
+  margin: 12px 0; 
+}
+
+.wishes strong {
+  color: #ff3366;
+}
+
+.name { 
+  margin-top: 20px; 
+  text-align: right; 
+  font-weight: bold; 
+  color: #ff3366;
+  font-size: 20px;
+}
+
+/* CORREÇÃO DOS EMOJIS - Posicionamento para não cobrir texto */
+.emoji { 
+  position: absolute; 
+  font-size: 2rem; /* Tamanho reduzido */
+  pointer-events: none; 
+  z-index: 1; /* Abaixo do texto */
+}
+
+.emoji.top-left { 
+  top: 25px; 
+  left: 30px; 
+}
+
+.emoji.top-right { 
+  top: 25px; 
+  right: 30px; 
+}
+
+.emoji.bottom-left { 
+  bottom: 25px; 
+  left: 1px; 
+}
+
+.emoji.bottom-right { 
+  bottom: 25px; 
+  right: 10px; 
+}
+
+#confetti-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 999;
+}
+
+@media (max-width: 560px){
+  .birthdayCard{ 
+    width: 90vw; 
+    height: 80vh; 
+  }
+  
+  .front-text {
+    padding: 15px;
+    max-width: 95%;
+  }
+  
+  .happy {
+    font-size: 32px;
+  }
+  
+  .bday {
+    font-size: 36px;
+  }
+  
+  .toyou {
+    font-size: 28px;
+  }
+  
+  .wishes { 
+    font-size: 16px; 
+  }
+  
+  .wrap-deco, 
+  .wrap-decoTwo {
+    display: none;
+  }
+  
+  .plate {
+    bottom: 120px;
+  }
+  
+  .emoji {
+    font-size: 1.8rem;
+  }
+  
+  .cardInside {
+    padding: 25px 30px; /* Ajuste para mobile */
+  }
+}
